@@ -73,7 +73,7 @@ namespace pimmsInterface
             {
                 // convert the message to ASCII data for transmission
                 String sData = iMsgType.ToString() + iOpcode.ToString();
-                Byte[] data = System.Text.Encoding.Unicode.GetBytes(sData);
+                Byte[] data = Encoding.ASCII.GetBytes(sData);
 
                 // Write the data to the network stream
                 stream.Write(data, 0, data.Length);
@@ -94,14 +94,64 @@ namespace pimmsInterface
             // send a message with a data string
         }
 
-        // Send a trigger poll response message
-        public void SendTriggerPollResponse()
+        // Send a trigger message
+        public void SendTriggerMessage(byte bOpcode)
         {
             try
             {
-                // Poll response data as raw hex, response never varies
+                // trigger data as raw hex, never varies
                 Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x0c,
-                                  0x00, 0x00, 0x00, 0x00, 0x02, 0x02, 0x07, 0x00, 0x00, 0x00, 0x0f };
+                                  0x00, 0x00, 0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0f };
+                data[16] = bOpcode;
+
+                // Write the data to the network stream
+                stream.Write(data, 0, data.Length);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("ArgumentNullException: {0}", e);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
+            }
+        }
+ 
+        // Send a train start message
+        public void SendTrainStartMessage(int iTrainID, int iControllerID)
+        {
+            try
+            {
+                // Base data string
+                Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00,
+                                0x00, 0x00, 0x05, 0x02, 0x01, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x12 };
+                // train ID
+                data[17] = Encoding.ASCII.GetBytes(iTrainID.ToString())[0];
+                // controller ID
+                data[19] = Encoding.ASCII.GetBytes(iControllerID.ToString())[0];
+
+                // Write the data to the network stream
+                stream.Write(data, 0, data.Length);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("ArgumentNullException: {0}", e);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
+            }
+        }
+
+        // Send a trigger message
+        public void SendTriggerMessage(byte iOpcode, string sData)
+        {
+            try
+            {
+                // trigger data as raw hex, never varies
+                Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x0c,
+                                  0x00, 0x00, 0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0f };
+                data[16] = iOpcode;
 
                 // Write the data to the network stream
                 stream.Write(data, 0, data.Length);
@@ -143,6 +193,7 @@ namespace pimmsInterface
             }
             
         }
+
         ~PimmsTCPClient()
         {
             Console.WriteLine("Aaaargh, I'm closing!");

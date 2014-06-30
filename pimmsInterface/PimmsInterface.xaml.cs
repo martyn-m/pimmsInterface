@@ -61,7 +61,8 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger Poll Response");
-                pimmsTrigger.SendTriggerPollResponse();
+                //pimmsTrigger.SendTriggerPollResponse();
+                pimmsTrigger.SendTriggerMessage(0x07);
             }
             else
             {
@@ -75,6 +76,8 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger 1 Event");
+                //pimmsTrigger.SendTriggerEvent();
+                pimmsTrigger.SendTriggerMessage(0x02);
             }
             else
             {
@@ -87,6 +90,7 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Train 1 ride start event");
+                pimmsTrigger.SendTrainStartMessage(0, 0);
             }
             else
             {
@@ -99,6 +103,7 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Train 2 ride start event");
+                pimmsTrigger.SendTrainStartMessage(1, 1);
             }
             else
             {
