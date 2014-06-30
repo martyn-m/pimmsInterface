@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net;
+using System.Net.Sockets;
 
 namespace pimmsInterface
 {
@@ -20,9 +22,25 @@ namespace pimmsInterface
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Initialise endpoint to connect to PiMMS Server
+        String sServerIpAddress = "192.168.0.106";
+        int iServerPort = 57343;
+
+        // Local IP to use for trigger comms
+        String sTriggerIpAddress = "192.168.0.221";
+        String sControllerIpAddress = "192.168.0.222";
+        IPEndPoint ipTriggerLocal;
+        IPEndPoint ipControllerLocal;
+        TcpClient clientTrigger;
+        TcpClient clientController;
+        
+
         public MainWindow()
         {
             InitializeComponent();
+            
+            ipTriggerLocal = new IPEndPoint(IPAddress.Parse(sTriggerIpAddress), 12345);
+            ipControllerLocal = new IPEndPoint(IPAddress.Parse(sControllerIpAddress), 12346);
         }
 
         private void TrigChk_CheckedChanged(object sender, RoutedEventArgs e)
@@ -31,11 +49,16 @@ namespace pimmsInterface
             {
                 // open a connection to the pimms server
                 Console.WriteLine("Connecting Trigger");
+                clientTrigger = new TcpClient(ipTriggerLocal);
+                clientTrigger.Connect(IPAddress.Parse(sServerIpAddress), iServerPort);
+                
             }
             else 
             {
                 // disconnect from the pimms server
                 Console.WriteLine("Disconnecting Trigger");
+                clientTrigger.Close();
+                clientTrigger = null;
             }
         }
 
@@ -43,7 +66,16 @@ namespace pimmsInterface
         {
             // Send a poll response message to the pimms server
             // check if we're connected first
-            Console.WriteLine("Sending Trigger Poll Response");
+            
+            if (clientTrigger != null)
+            {
+                Console.WriteLine("Sending Trigger Poll Response");
+            }
+            else
+            {
+                Console.WriteLine("Poll response failed: No open connection");
+            }
+            
         }
 
         private void TrigEventBtn_Click(object sender, RoutedEventArgs e)
@@ -69,18 +101,30 @@ namespace pimmsInterface
             {
                 // Open a connection to the PiMMS server using the controller IP address
                 Console.WriteLine("Connecting Controller");
+                clientController = new TcpClient(ipControllerLocal);
+                clientController.Connect(IPAddress.Parse(sServerIpAddress), iServerPort);
             }
             else
             {
                 // Disconnect the controller 
                 Console.WriteLine("Disconnecting Controller");
+                clientController.Close();
+                clientController = null;
             }
         }
 
         private void ConLogOnBtn_Click(object sender, RoutedEventArgs e)
         {
             // If the controller is connected, send a log on message to the PiMMS server
-            Console.WriteLine("Logging On");
+            if (clientController != null)
+            {
+                Console.WriteLine("Logging On");
+            }
+            else
+            {
+                Console.WriteLine("Log on failed: no open connection");
+            }
+            
         }
     }
 }
