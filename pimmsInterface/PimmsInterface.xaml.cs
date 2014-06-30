@@ -61,6 +61,7 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger Poll Response");
+                pimmsTrigger.SendTriggerPollResponse();
             }
             else
             {
