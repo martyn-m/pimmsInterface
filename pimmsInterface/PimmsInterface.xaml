@@ -1,17 +1,23 @@
 ﻿<Window x:Name="InterfaceWindow" x:Class="pimmsInterface.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PiMMS Interface" Height="238.164" Width="411.134" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" ResizeMode="NoResize">
-    <Canvas HorizontalAlignment="Left" Height="195" Margin="10,10,0,0" VerticalAlignment="Top" Width="391">
-        <Label x:Name="TrigLabel" Content="Trigger" Canvas.Left="10" Canvas.Top="10"/>
-        <CheckBox x:Name="TrigChk" Content="Connect" Canvas.Left="10" Canvas.Top="41" Checked="TrigChk_CheckedChanged" Unchecked="TrigChk_CheckedChanged"/>
-        <Button x:Name="TrigPollBtn" Content="Poll Response" Canvas.Left="101" Canvas.Top="38" Width="85" Click="TrigPollBtn_Click"/>
-        <Button x:Name="TrigEventBtn" Content="Trigger Event" Canvas.Left="191" Canvas.Top="38" Width="85" Click="TrigEventBtn_Click"/>
-        <Button x:Name="TrigT1Btn" Content="Train 1 Start" Canvas.Left="101" Canvas.Top="65" Width="85" Click="TrigT1Btn_Click"/>
-        <Button x:Name="TrigT2Btn" Content="Train 2 Start" Canvas.Left="191" Canvas.Top="65" Width="85" Click="TrigT2Btn_Click"/>
-        <Label x:Name="ControllerLbl" Content="Controller" Canvas.Left="10" Canvas.Top="101"/>
-        <CheckBox x:Name="ControllerChk" Content="Connect" Canvas.Left="12" Canvas.Top="132" Checked="ControllerChk_CheckedChanged" Unchecked="ControllerChk_CheckedChanged"/>
-        <Button x:Name="ConLogOnBtn" Content="Log On" Canvas.Left="101" Canvas.Top="129" Width="85" Click="ConLogOnBtn_Click"/>
-        
+        Title="PiMMS Interface" Height="217.164" Width="343.134" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" ResizeMode="NoResize">
+    <Canvas Height="165" Margin="10,10,4,0" VerticalAlignment="Top">
+        <GroupBox Header="Trigger" Canvas.Left="10" Canvas.Top="10" Height="83" Width="298">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="56" Width="298" Margin="0,0,0,0">
+                <CheckBox x:Name="TrigChk" Content="Connect" Checked="TrigChk_CheckedChanged" Unchecked="TrigChk_CheckedChanged" Margin="10,10,52,20"/>
+                <Button x:Name="TrigPollBtn" Content="Poll Response" Click="TrigPollBtn_Click" Margin="93,7,120,27" Height="22" Width="85"/>
+                <Button x:Name="TrigEventBtn" Content="Trigger Event" Click="TrigEventBtn_Click" Margin="183,7,30,27" Height="22" Width="85"/>
+                <Button x:Name="TrigT1Btn" Content="Train 1 Start" Click="TrigT1Btn_Click" Margin="93,34,120,0" Height="22" Width="85"/>
+                <Button x:Name="TrigT2Btn" Content="Train 2 Start" Click="TrigT2Btn_Click" Margin="183,34,30,0" Width="85" Height="22"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Controller" Canvas.Left="10" Canvas.Top="98" Height="58" Width="298">
+            <Grid HorizontalAlignment="Left" Height="46" VerticalAlignment="Top" Width="288" Margin="0,0,-2,-10">
+                <Button x:Name="ConLogOnBtn" Content="Log On" Click="ConLogOnBtn_Click" Margin="95,7,108,17" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273"/>
+                <CheckBox x:Name="ControllerChk" Content="Connect" Checked="ControllerChk_CheckedChanged" Unchecked="ControllerChk_CheckedChanged" Margin="10,10,198,14" RenderTransformOrigin="1.1,1.35"/>
+            </Grid>
+        </GroupBox>
+
     </Canvas>
 </Window>
