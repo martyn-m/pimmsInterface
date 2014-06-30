@@ -29,18 +29,14 @@ namespace pimmsInterface
         // Local IP to use for trigger comms
         String sTriggerIpAddress = "192.168.0.221";
         String sControllerIpAddress = "192.168.0.222";
-        IPEndPoint ipTriggerLocal;
-        IPEndPoint ipControllerLocal;
-        TcpClient clientTrigger;
-        TcpClient clientController;
-        
+        PimmsTCPClient pimmsTrigger;
+        PimmsTCPClient pimmsController;
 
         public MainWindow()
         {
             InitializeComponent();
-            
-            ipTriggerLocal = new IPEndPoint(IPAddress.Parse(sTriggerIpAddress), 12345);
-            ipControllerLocal = new IPEndPoint(IPAddress.Parse(sControllerIpAddress), 12346);
+            pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress);
+            pimmsController = new PimmsTCPClient(sControllerIpAddress);
         }
 
         private void TrigChk_CheckedChanged(object sender, RoutedEventArgs e)
@@ -49,25 +45,20 @@ namespace pimmsInterface
             {
                 // open a connection to the pimms server
                 Console.WriteLine("Connecting Trigger");
-                clientTrigger = new TcpClient(ipTriggerLocal);
-                clientTrigger.Connect(IPAddress.Parse(sServerIpAddress), iServerPort);
-                
+                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
             }
             else 
             {
                 // disconnect from the pimms server
                 Console.WriteLine("Disconnecting Trigger");
-                clientTrigger.Close();
-                clientTrigger = null;
+                pimmsTrigger.Close();
             }
         }
 
         private void TrigPollBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a poll response message to the pimms server
-            // check if we're connected first
-            
-            if (clientTrigger != null)
+            if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger Poll Response");
             }
@@ -75,24 +66,43 @@ namespace pimmsInterface
             {
                 Console.WriteLine("Poll response failed: No open connection");
             }
-            
         }
 
         private void TrigEventBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a Trigger event message to the pimms server
-            // if we are connected
-            Console.WriteLine("Sending Trigger 1 Event");
+            if (pimmsTrigger.Connected)
+            {
+                Console.WriteLine("Sending Trigger 1 Event");
+            }
+            else
+            {
+                Console.WriteLine("Trigger 1 event failed: No open connection");
+            }
         }
 
         private void TrigT1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Sending Train 1 ride start event");
+            if (pimmsTrigger.Connected)
+            {
+                Console.WriteLine("Sending Train 1 ride start event");
+            }
+            else
+            {
+                Console.WriteLine("Train 1 start failed: No open connection");
+            }
         }
 
         private void TrigT2Btn_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Sending Train 2 ride start event");
+            if (pimmsTrigger.Connected)
+            {
+                Console.WriteLine("Sending Train 2 ride start event");
+            }
+            else
+            {
+                Console.WriteLine("Train 2 start failed: No open connection");
+            }
         }
 
         private void ControllerChk_CheckedChanged(object sender, RoutedEventArgs e)
@@ -101,22 +111,20 @@ namespace pimmsInterface
             {
                 // Open a connection to the PiMMS server using the controller IP address
                 Console.WriteLine("Connecting Controller");
-                clientController = new TcpClient(ipControllerLocal);
-                clientController.Connect(IPAddress.Parse(sServerIpAddress), iServerPort);
+                pimmsController.Connect(sServerIpAddress, iServerPort);
             }
             else
             {
                 // Disconnect the controller 
                 Console.WriteLine("Disconnecting Controller");
-                clientController.Close();
-                clientController = null;
+                pimmsController.Close();
             }
         }
 
         private void ConLogOnBtn_Click(object sender, RoutedEventArgs e)
         {
-            // If the controller is connected, send a log on message to the PiMMS server
-            if (clientController != null)
+            // Send a log on message to the PiMMS server
+            if (pimmsController.Connected)
             {
                 Console.WriteLine("Logging On");
             }

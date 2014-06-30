@@ -11,15 +11,15 @@ namespace pimmsInterface
     class PimmsTCPClient
     {
         protected TcpClient pimmsClient;
+        public bool Connected = false;
+        IPEndPoint ipLocalEndPoint;
 
         public PimmsTCPClient(String sLocalAddress)
         {
             try
             {
-                Console.WriteLine("Creating new TcpClient bound to {0}", sLocalAddress);
-                // Create a new TcpClient bound to the specified local address
-                IPEndPoint ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sLocalAddress), 57343);
-                this.pimmsClient = new TcpClient(ipLocalEndPoint);
+                // Create a new IP end point using the supplied local address
+                ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sLocalAddress), 57343);   
             }
             catch (ArgumentNullException e)
             {
@@ -31,24 +31,24 @@ namespace pimmsInterface
             } 
         }
 
-        public bool IsConnected()
-        {
-            if (this.pimmsClient.Connected == true)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public void Connect(String sServerAddress, int iServerPort)
         {
             try 
             {
-                // connect to the remote server
-                this.pimmsClient.Connect(IPAddress.Parse(sServerAddress), iServerPort);  
+                if (!Connected)
+                {
+                    // connect to the remote server
+                    Console.WriteLine("Creating new TcpClient bound to {0}", ipLocalEndPoint.ToString());
+                    pimmsClient = new TcpClient(ipLocalEndPoint);
+                    Console.WriteLine("Connecting to {0}:{1}", sServerAddress, iServerPort);
+                    pimmsClient.Connect(IPAddress.Parse(sServerAddress), iServerPort);
+                    Connected = true;
+                }
+                else
+                {
+                    Console.WriteLine("Connection attempt to {0}:{1} recieved when already connected", sServerAddress, iServerPort);
+                }
+                
             }
             catch (ArgumentNullException e)
             {
@@ -64,8 +64,17 @@ namespace pimmsInterface
         {
             try
             {
-                // Close the connection
-                this.pimmsClient.Close();
+                if (Connected)
+                {
+                    // Close the connection
+                    Console.WriteLine("Closing connection");
+                    pimmsClient.Close();
+                    Connected = false;
+                }
+                else
+                {
+                    Console.WriteLine("Unable to close connection, none open");
+                }
             }
             catch (ArgumentNullException e)
             {
@@ -76,6 +85,10 @@ namespace pimmsInterface
                 Console.WriteLine("SocketException: {0}", e);
             }
             
+        }
+        ~PimmsTCPClient()
+        {
+            Console.WriteLine("Aaaargh, I'm closing!");
         }
 
     }
