@@ -12,8 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Net;
-using System.Net.Sockets;
+using System.Timers;
 
 namespace pimmsInterface
 {
@@ -32,11 +31,29 @@ namespace pimmsInterface
         PimmsTCPClient pimmsTrigger;
         PimmsTCPClient pimmsController;
 
+        // Create a timer to periodically send trigger poll responses
+        Timer triggerTimer;
+        
+
         public MainWindow()
         {
             InitializeComponent();
+            
             pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress);
             pimmsController = new PimmsTCPClient(sControllerIpAddress);
+
+            // Set up the timer for periodic trigger poll responses, but leave it disabled
+            triggerTimer = new Timer();
+            triggerTimer.Elapsed += new ElapsedEventHandler(OnTriggerTimer);
+            triggerTimer.Interval = 45000;
+            triggerTimer.Enabled = false;
+
+        }
+
+        private void OnTriggerTimer(object sender, ElapsedEventArgs e)
+        {
+            Console.WriteLine("Sending periodic trigger poll response");
+            pimmsTrigger.SendTriggerMessage(0x07);
         }
 
         private void TrigChk_CheckedChanged(object sender, RoutedEventArgs e)
@@ -46,9 +63,15 @@ namespace pimmsInterface
                 // open a connection to the pimms server
                 Console.WriteLine("Connecting Trigger");
                 pimmsTrigger.Connect(sServerIpAddress, iServerPort);
+
+                // enable the poll response timer
+                triggerTimer.Enabled = true;
             }
             else 
             {
+                // disable the poll response timer
+                triggerTimer.Enabled = false;
+
                 // disconnect from the pimms server
                 Console.WriteLine("Disconnecting Trigger");
                 pimmsTrigger.Close();
@@ -133,6 +156,7 @@ namespace pimmsInterface
             if (pimmsController.Connected)
             {
                 Console.WriteLine("Logging On");
+                pimmsController.SendLogOnMessage();
             }
             else
             {
