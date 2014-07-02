@@ -43,7 +43,7 @@ namespace pimmsInterface
         {
             InitializeComponent();
             
-            pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress);
+            pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress); 
             pimmsController1 = new PimmsTCPClient(sController1IpAddress);
             pimmsController2 = new PimmsTCPClient(sController2IpAddress);
 

@@ -10,25 +10,17 @@ namespace pimmsInterface
 {
     class PimmsTCPClient
     {
-        protected TcpClient pimmsClient;
+        private TcpClient pimmsClient;
         public bool Connected = false;
-        IPEndPoint ipLocalEndPoint;
-        NetworkStream stream;
-        public PimmsTCPClient(String sLocalAddress)
+        private IPEndPoint ipLocalEndPoint;
+        private NetworkStream stream;
+        private String sLocalAddress;
+        private int iPort;
+
+        public PimmsTCPClient(String sLocalIpAddress)
         {
-            try
-            {
-                // Create a new IP end point using the supplied local address
-                ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sLocalAddress), 57343);   
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            } 
+            iPort = 12345;
+                sLocalAddress = sLocalIpAddress;
         }
 
         public void Connect(String sServerAddress, int iServerPort)
@@ -38,9 +30,11 @@ namespace pimmsInterface
                 if (!Connected)
                 {
                     // Create a TCPClient bound to the specified local interface
+                    ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sLocalAddress), iPort);
+                    iPort++;
                     Console.WriteLine("Creating new TcpClient bound to {0}", ipLocalEndPoint.ToString());
                     pimmsClient = new TcpClient(ipLocalEndPoint);
-
+                    
                     // Connect to the remote PiMMS server
                     Console.WriteLine("Connecting to {0}:{1}", sServerAddress, iServerPort);
                     pimmsClient.Connect(IPAddress.Parse(sServerAddress), iServerPort);
@@ -161,8 +155,9 @@ namespace pimmsInterface
                 {
                     // Close the connection
                     Console.WriteLine("Closing connection");
+                    stream.Close();
                     pimmsClient.Close();
-
+                    
                     Connected = false;
                 }
                 else

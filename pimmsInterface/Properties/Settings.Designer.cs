@@ -121,7 +121,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.101")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.2")]
         public string sController1IpAddress {
             get {
                 return ((string)(this["sController1IpAddress"]));

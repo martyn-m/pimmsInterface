@@ -27,7 +27,7 @@
       <Value Profile="(Default)">192.168.16.21</Value>
     </Setting>
     <Setting Name="sController1IpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.16.101</Value>
+      <Value Profile="(Default)">192.168.16.2</Value>
     </Setting>
     <Setting Name="sController2IpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.16.102</Value>
