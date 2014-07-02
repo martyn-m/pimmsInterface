@@ -1,7 +1,39 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="pimmsInterface.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="sBasePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\\VioCamera</Value>
+    </Setting>
+    <Setting Name="sCameraFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Camera</Value>
+    </Setting>
+    <Setting Name="sControllerFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Controller</Value>
+    </Setting>
+    <Setting Name="iNumberOfCameras" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">16</Value>
+    </Setting>
+    <Setting Name="iNumberOfControllers" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="sSourceFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\\VioCamera\source</Value>
+    </Setting>
+    <Setting Name="sServerIpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.16.1</Value>
+    </Setting>
+    <Setting Name="sTriggerIpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.16.21</Value>
+    </Setting>
+    <Setting Name="sController1IpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.16.101</Value>
+    </Setting>
+    <Setting Name="sController2IpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.16.102</Value>
+    </Setting>
+    <Setting Name="iServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">57343</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

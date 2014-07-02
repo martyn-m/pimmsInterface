@@ -8,22 +8,150 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace pimmsInterface.Properties
-{
-
-
+namespace pimmsInterface.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\\\VioCamera")]
+        public string sBasePath {
+            get {
+                return ((string)(this["sBasePath"]));
+            }
+            set {
+                this["sBasePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Camera")]
+        public string sCameraFolder {
+            get {
+                return ((string)(this["sCameraFolder"]));
+            }
+            set {
+                this["sCameraFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Controller")]
+        public string sControllerFolder {
+            get {
+                return ((string)(this["sControllerFolder"]));
+            }
+            set {
+                this["sControllerFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public int iNumberOfCameras {
+            get {
+                return ((int)(this["iNumberOfCameras"]));
+            }
+            set {
+                this["iNumberOfCameras"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int iNumberOfControllers {
+            get {
+                return ((int)(this["iNumberOfControllers"]));
+            }
+            set {
+                this["iNumberOfControllers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\\\VioCamera\\source")]
+        public string sSourceFilePath {
+            get {
+                return ((string)(this["sSourceFilePath"]));
+            }
+            set {
+                this["sSourceFilePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.1")]
+        public string sServerIpAddress {
+            get {
+                return ((string)(this["sServerIpAddress"]));
+            }
+            set {
+                this["sServerIpAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.21")]
+        public string sTriggerIpAddress {
+            get {
+                return ((string)(this["sTriggerIpAddress"]));
+            }
+            set {
+                this["sTriggerIpAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.101")]
+        public string sController1IpAddress {
+            get {
+                return ((string)(this["sController1IpAddress"]));
+            }
+            set {
+                this["sController1IpAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.102")]
+        public string sController2IpAddress {
+            get {
+                return ((string)(this["sController2IpAddress"]));
+            }
+            set {
+                this["sController2IpAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("57343")]
+        public int iServerPort {
+            get {
+                return ((int)(this["iServerPort"]));
+            }
+            set {
+                this["iServerPort"] = value;
             }
         }
     }

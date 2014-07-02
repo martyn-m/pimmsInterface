@@ -22,14 +22,18 @@ namespace pimmsInterface
     public partial class MainWindow : Window
     {
         // Initialise endpoint to connect to PiMMS Server
-        String sServerIpAddress = "192.168.0.106";
-        int iServerPort = 57343;
+        String sServerIpAddress = pimmsInterface.Properties.Settings.Default.sServerIpAddress;
+        int iServerPort = pimmsInterface.Properties.Settings.Default.iServerPort;
 
-        // Local IP to use for trigger comms
-        String sTriggerIpAddress = "192.168.0.221";
-        String sControllerIpAddress = "192.168.0.222";
+        // Local IPs to use for PiMMS comms
+        String sTriggerIpAddress = pimmsInterface.Properties.Settings.Default.sTriggerIpAddress;
+        String sController1IpAddress = pimmsInterface.Properties.Settings.Default.sController1IpAddress;
+        String sController2IpAddress = pimmsInterface.Properties.Settings.Default.sController2IpAddress;
+        
+        // Declare PimmsTCPClient objects    
         PimmsTCPClient pimmsTrigger;
-        PimmsTCPClient pimmsController;
+        PimmsTCPClient pimmsController1;
+        PimmsTCPClient pimmsController2;
 
         // Create a timer to periodically send trigger poll responses
         Timer triggerTimer;
@@ -40,7 +44,8 @@ namespace pimmsInterface
             InitializeComponent();
             
             pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress);
-            pimmsController = new PimmsTCPClient(sControllerIpAddress);
+            pimmsController1 = new PimmsTCPClient(sController1IpAddress);
+            pimmsController2 = new PimmsTCPClient(sController2IpAddress);
 
             // Set up the timer for periodic trigger poll responses, but leave it disabled
             triggerTimer = new Timer();
@@ -126,7 +131,7 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Train 2 ride start event");
-                pimmsTrigger.SendTrainStartMessage(1, 1);
+                pimmsTrigger.SendTrainStartMessage(1, 0);
             }
             else
             {
@@ -134,33 +139,63 @@ namespace pimmsInterface
             }
         }
 
-        private void ControllerChk_CheckedChanged(object sender, RoutedEventArgs e)
+        private void Controller1Chk_CheckedChanged(object sender, RoutedEventArgs e)
         {
-            if (ControllerChk.IsChecked == true)
+            if (Controller1Chk.IsChecked == true)
             {
                 // Open a connection to the PiMMS server using the controller IP address
-                Console.WriteLine("Connecting Controller");
-                pimmsController.Connect(sServerIpAddress, iServerPort);
+                Console.WriteLine("Connecting Controller 1");
+                pimmsController1.Connect(sServerIpAddress, iServerPort);
             }
             else
             {
                 // Disconnect the controller 
-                Console.WriteLine("Disconnecting Controller");
-                pimmsController.Close();
+                Console.WriteLine("Disconnecting Controller 1");
+                pimmsController1.Close();
             }
         }
 
-        private void ConLogOnBtn_Click(object sender, RoutedEventArgs e)
+        private void Controller1LogOnBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a log on message to the PiMMS server
-            if (pimmsController.Connected)
+            if (pimmsController1.Connected)
             {
-                Console.WriteLine("Logging On");
-                pimmsController.SendLogOnMessage();
+                Console.WriteLine("Logging On (1)");
+                pimmsController1.SendLogOnMessage();
             }
             else
             {
-                Console.WriteLine("Log on failed: no open connection");
+                Console.WriteLine("Log on (1) failed: no open connection");
+            }
+            
+        }
+        private void Controller2Chk_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            if (Controller2Chk.IsChecked == true)
+            {
+                // Open a connection to the PiMMS server using the controller IP address
+                Console.WriteLine("Connecting Controller 2");
+                pimmsController2.Connect(sServerIpAddress, iServerPort);
+            }
+            else
+            {
+                // Disconnect the controller 
+                Console.WriteLine("Disconnecting Controller 2");
+                pimmsController2.Close();
+            }
+        }
+
+        private void Controller2LogOnBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Send a log on message to the PiMMS server
+            if (pimmsController2.Connected)
+            {
+                Console.WriteLine("Logging On (2)");
+                pimmsController2.SendLogOnMessage();
+            }
+            else
+            {
+                Console.WriteLine("Log on (2) failed: no open connection");
             }
             
         }
