@@ -25,7 +25,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\\\VioCamera")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\VioController")]
         public string sBasePath {
             get {
                 return ((string)(this["sBasePath"]));
@@ -85,7 +85,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\\\VioCamera\\source")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\VioController\\source")]
         public string sSourceFilePath {
             get {
                 return ((string)(this["sSourceFilePath"]));
@@ -152,6 +152,42 @@ namespace pimmsInterface.Properties {
             }
             set {
                 this["iServerPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("battery.ini")]
+        public string sBatteryIniFile {
+            get {
+                return ((string)(this["sBatteryIniFile"]));
+            }
+            set {
+                this["sBatteryIniFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("clip0.mpg")]
+        public string sVideoFile {
+            get {
+                return ((string)(this["sVideoFile"]));
+            }
+            set {
+                this["sVideoFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("clip0.inf")]
+        public string sVideoInfFile {
+            get {
+                return ((string)(this["sVideoInfFile"]));
+            }
+            set {
+                this["sVideoInfFile"] = value;
             }
         }
     }

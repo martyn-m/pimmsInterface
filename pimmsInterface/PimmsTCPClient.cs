@@ -48,15 +48,11 @@ namespace pimmsInterface
                 {
                     Console.WriteLine("Connection attempt to {0}:{1} recieved when already connected", sServerAddress, iServerPort);
                 }
-                
+
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
+                Console.WriteLine("Exception: {0}", e);
             }
         }
 
@@ -73,13 +69,9 @@ namespace pimmsInterface
                 // Write the data to the network stream
                 stream.Write(data, 0, data.Length);
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
+                Console.WriteLine("Exception: {0}", e);
             }
         }
  
@@ -99,13 +91,9 @@ namespace pimmsInterface
                 // Write the data to the network stream
                 stream.Write(data, 0, data.Length);
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
+                Console.WriteLine("Exception: {0}", e);
             }
         }
 
@@ -138,13 +126,9 @@ namespace pimmsInterface
                 // Write the data to the network stream
                 stream.Write(data, 0, data.Length);
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
+                Console.WriteLine("Exception: {0}", e);
             }
         }
 
@@ -166,15 +150,10 @@ namespace pimmsInterface
                     Console.WriteLine("Unable to close connection, none open");
                 }
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            
+                Console.WriteLine("Exception: {0}", e);
+            }                 
         }
 
         ~PimmsTCPClient()

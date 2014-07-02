@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="sBasePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\\VioCamera</Value>
+      <Value Profile="(Default)">C:\VioController</Value>
     </Setting>
     <Setting Name="sCameraFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">Camera</Value>
@@ -18,7 +18,7 @@
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="sSourceFilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\\VioCamera\source</Value>
+      <Value Profile="(Default)">C:\VioController\source</Value>
     </Setting>
     <Setting Name="sServerIpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.16.1</Value>
@@ -34,6 +34,15 @@
     </Setting>
     <Setting Name="iServerPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">57343</Value>
+    </Setting>
+    <Setting Name="sBatteryIniFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">battery.ini</Value>
+    </Setting>
+    <Setting Name="sVideoFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">clip0.mpg</Value>
+    </Setting>
+    <Setting Name="sVideoInfFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">clip0.inf</Value>
     </Setting>
   </Settings>
 </SettingsFile>

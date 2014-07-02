@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace pimmsInterface
     /// </summary>
     public partial class MainWindow : Window
     {
-        // Initialise endpoint to connect to PiMMS Server
+        // PiMMS Server Details
         String sServerIpAddress = pimmsInterface.Properties.Settings.Default.sServerIpAddress;
         int iServerPort = pimmsInterface.Properties.Settings.Default.iServerPort;
 
@@ -29,6 +30,19 @@ namespace pimmsInterface
         String sTriggerIpAddress = pimmsInterface.Properties.Settings.Default.sTriggerIpAddress;
         String sController1IpAddress = pimmsInterface.Properties.Settings.Default.sController1IpAddress;
         String sController2IpAddress = pimmsInterface.Properties.Settings.Default.sController2IpAddress;
+
+        // Paths to files
+        String sBasePath = pimmsInterface.Properties.Settings.Default.sBasePath;
+        String sCameraFolder = pimmsInterface.Properties.Settings.Default.sCameraFolder;
+        String sControllerFolder = pimmsInterface.Properties.Settings.Default.sControllerFolder;
+        String sSourceFilePath = pimmsInterface.Properties.Settings.Default.sSourceFilePath;
+        String sBatteryIniFile = pimmsInterface.Properties.Settings.Default.sBatteryIniFile;
+        String sVideoFile = pimmsInterface.Properties.Settings.Default.sVideoFile;
+        String sVideoInfFile = pimmsInterface.Properties.Settings.Default.sVideoInfFile;
+        
+        // Number of Cameras and Controllers to initialise
+        int iNumCameras = pimmsInterface.Properties.Settings.Default.iNumberOfCameras;
+        int iNumControllers = pimmsInterface.Properties.Settings.Default.iNumberOfControllers;
         
         // Declare PimmsTCPClient objects    
         PimmsTCPClient pimmsTrigger;
@@ -52,7 +66,6 @@ namespace pimmsInterface
             triggerTimer.Elapsed += new ElapsedEventHandler(OnTriggerTimer);
             triggerTimer.Interval = 45000;
             triggerTimer.Enabled = false;
-
         }
 
         private void OnTriggerTimer(object sender, ElapsedEventArgs e)
@@ -198,6 +211,66 @@ namespace pimmsInterface
                 Console.WriteLine("Log on (2) failed: no open connection");
             }
             
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Re-create all the dummy files in the FTP folder structure
+
+            String sSourceBatteryIniFile = System.IO.Path.Combine(sSourceFilePath, "logs", sBatteryIniFile);
+            String sSourceVideoFile = System.IO.Path.Combine(sSourceFilePath,sVideoFile);
+            String sSourceVideoInfFile = System.IO.Path.Combine(sSourceFilePath,sVideoInfFile);
+
+            for (int i = 1; i <= iNumControllers; i++)
+            {
+                // Copy battery.ini into controller logs folder
+                String sThisController = sControllerFolder + i.ToString();
+                String sDestBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisController, "logs");
+                String sDestBatteryIniFile = System.IO.Path.Combine(sDestBatteryIniPath, sBatteryIniFile);
+                try
+                {
+                    if (!System.IO.Directory.Exists(sDestBatteryIniPath))
+                    {
+                        System.IO.Directory.CreateDirectory(sDestBatteryIniPath);
+                    }
+
+                    Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestBatteryIniFile);
+                    System.IO.File.Copy(sSourceBatteryIniFile, sDestBatteryIniFile, true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception: {0}", ex);
+                }
+            }
+            for (int i = 1; i <= iNumCameras; i++)
+            {
+                // Copy battery.ini into camera logs folder
+                String sThisCamera = sCameraFolder + i.ToString();
+                String sDestBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
+                String sDestBatteryIniFile = System.IO.Path.Combine(sDestBatteryIniPath, sBatteryIniFile);
+                
+                try
+                {
+                    if (!System.IO.Directory.Exists(sDestBatteryIniPath))
+                    {
+                        System.IO.Directory.CreateDirectory(sDestBatteryIniPath);
+                    }
+
+                    Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestBatteryIniFile);
+                    System.IO.File.Copy(sSourceBatteryIniFile, sDestBatteryIniFile, true);
+
+                    // Copy dummy video and inf into camera folder
+                    String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
+                    String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
+                    Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                    System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                    System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception: {0}", ex);
+                }
+            }          
         }
     }
 }
