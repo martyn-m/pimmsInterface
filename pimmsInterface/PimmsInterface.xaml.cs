@@ -57,6 +57,7 @@ namespace pimmsInterface
         {
             InitializeComponent();
             
+            // Create new PimmsTCPCLient objects to manage communications from various compnents to a PiMMS server
             pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress); 
             pimmsController1 = new PimmsTCPClient(sController1IpAddress);
             pimmsController2 = new PimmsTCPClient(sController2IpAddress);
@@ -68,12 +69,23 @@ namespace pimmsInterface
             triggerTimer.Enabled = false;
         }
 
+        /// <summary>
+        /// Timer to periodically send a poll response message to the PiMMS server to keep the server<->trigger connection alive.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTriggerTimer(object sender, ElapsedEventArgs e)
         {
             Console.WriteLine("Sending periodic trigger poll response");
             pimmsTrigger.SendTriggerMessage(0x07);
         }
 
+        /// <summary>
+        /// Connects or disconnects the trigger PimmsTCPClient
+        /// Additionally enables the triggerTimer as necessary to periodically send trigger poll responses when connected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrigChk_CheckedChanged(object sender, RoutedEventArgs e)
         {
             if(TrigChk.IsChecked == true)
@@ -96,6 +108,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Manaully send a trigger poll response message to the PiMMS server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrigPollBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a poll response message to the pimms server
@@ -111,6 +128,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Manually send a trigger 1 event message to the PiMMS server.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrigEventBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a Trigger event message to the pimms server
@@ -126,6 +148,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Manually send a train 1 started message to the PiMMS server.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrigT1Btn_Click(object sender, RoutedEventArgs e)
         {
             if (pimmsTrigger.Connected)
@@ -139,6 +166,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Manually send a train 2 started message to the PiMMS server.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrigT2Btn_Click(object sender, RoutedEventArgs e)
         {
             if (pimmsTrigger.Connected)
@@ -152,6 +184,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Open or close a TCP connection to the PiMMS Server for controller 2.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Controller1Chk_CheckedChanged(object sender, RoutedEventArgs e)
         {
             if (Controller1Chk.IsChecked == true)
@@ -168,6 +205,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Send a log on message from Controller 2
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Controller1LogOnBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a log on message to the PiMMS server
@@ -182,6 +224,12 @@ namespace pimmsInterface
             }
             
         }
+
+        /// <summary>
+        /// Open or close a TCP connection to the PiMMS Server for controller 2.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Controller2Chk_CheckedChanged(object sender, RoutedEventArgs e)
         {
             if (Controller2Chk.IsChecked == true)
@@ -198,6 +246,11 @@ namespace pimmsInterface
             }
         }
 
+        /// <summary>
+        /// Send a log on message from Controller 2
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Controller2LogOnBtn_Click(object sender, RoutedEventArgs e)
         {
             // Send a log on message to the PiMMS server
@@ -213,10 +266,26 @@ namespace pimmsInterface
             
         }
 
+        /// <summary>
+        /// Re-initialise the camera/controller hot folders after the completion of a 'ride'
+        /// 
+        /// For each camera hot folder:
+        /// Copies a dummy clip0.inf video information file from a source location to the hot folder, 
+        ///     must be implemented or the PiMMS server will report a failed video download and abort.
+        /// 
+        /// Copies a dummy \logs\battery.ini file from a source location to the hot folder,
+        ///     not strictly necessary for system functionality, but prevents error mesages in PiMMS
+        /// 
+        /// Copies in a fake video clip (clip0.mpg) for testing only.
+        /// 
+        /// For each controller hot folder:
+        /// Copies a dummy \logs\battery.ini file from a source location to the hot folder,
+        ///     not strictly necessary for system functionality, but prevents error mesages in PiMMS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            // Re-create all the dummy files in the FTP folder structure
-
             String sSourceBatteryIniFile = System.IO.Path.Combine(sSourceFilePath, "logs", sBatteryIniFile);
             String sSourceVideoFile = System.IO.Path.Combine(sSourceFilePath,sVideoFile);
             String sSourceVideoInfFile = System.IO.Path.Combine(sSourceFilePath,sVideoInfFile);
