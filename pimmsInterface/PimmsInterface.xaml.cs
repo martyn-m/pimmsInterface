@@ -43,6 +43,7 @@ namespace pimmsInterface
         // Number of Cameras and Controllers to initialise
         int iNumCameras = pimmsInterface.Properties.Settings.Default.iNumberOfCameras;
         int iNumControllers = pimmsInterface.Properties.Settings.Default.iNumberOfControllers;
+        int iNumRows = pimmsInterface.Properties.Settings.Default.iNumberOfRows;
         
         // Declare PimmsTCPClient objects    
         PimmsTCPClient pimmsTrigger;
@@ -310,36 +311,65 @@ namespace pimmsInterface
                 {
                     Console.WriteLine("Exception: {0}", ex);
                 }
-            }
-            for (int i = 1; i <= iNumCameras; i++)
-            {
-                // Copy battery.ini into camera logs folder
-                String sThisCamera = sCameraFolder + i.ToString();
-                String sDestBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
-                String sDestBatteryIniFile = System.IO.Path.Combine(sDestBatteryIniPath, sBatteryIniFile);
-                
-                try
+                for (int j = 1; j <= iNumRows; j++)
                 {
-                    if (!System.IO.Directory.Exists(sDestBatteryIniPath))
+                    // Copy battery.ini into camera logs folder
+                    String sThisCamera = i.ToString() + "-" + j.ToString() + "a";
+                    String sDestCamBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
+                    String sDestCamBatteryIniFile = System.IO.Path.Combine(sDestCamBatteryIniPath, sBatteryIniFile);
+
+                    try
                     {
-                        System.IO.Directory.CreateDirectory(sDestBatteryIniPath);
+                        if (!System.IO.Directory.Exists(sDestCamBatteryIniPath))
+                        {
+                            System.IO.Directory.CreateDirectory(sDestCamBatteryIniPath);
+                        }
+
+                        Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestCamBatteryIniFile);
+                        System.IO.File.Copy(sSourceBatteryIniFile, sDestCamBatteryIniFile, true);
+
+                        // Copy dummy video and inf into camera folder
+                        String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
+                        String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
+                        Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                        System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception: {0}", ex);
+                    }
+ 
+                    // Copy battery.ini into camera logs folder
+                    sThisCamera = i.ToString() + "-" + j.ToString() + "b";
+                    sDestCamBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
+                    sDestCamBatteryIniFile = System.IO.Path.Combine(sDestCamBatteryIniPath, sBatteryIniFile);
+
+                    try
+                    {
+                        if (!System.IO.Directory.Exists(sDestCamBatteryIniPath))
+                        {
+                            System.IO.Directory.CreateDirectory(sDestCamBatteryIniPath);
+                        }
+
+                        Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestCamBatteryIniFile);
+                        System.IO.File.Copy(sSourceBatteryIniFile, sDestCamBatteryIniFile, true);
+
+                        // Copy dummy video and inf into camera folder
+                        String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
+                        String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
+                        Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                        System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception: {0}", ex);
                     }
 
-                    Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestBatteryIniFile);
-                    System.IO.File.Copy(sSourceBatteryIniFile, sDestBatteryIniFile, true);
-
-                    // Copy dummy video and inf into camera folder
-                    String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
-                    String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
-                    Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                    System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
-                    System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception: {0}", ex);
-                }
-            }          
+                }       
+            }
+               
         }
     }
 }

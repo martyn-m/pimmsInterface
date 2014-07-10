@@ -61,7 +61,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int iNumberOfCameras {
             get {
                 return ((int)(this["iNumberOfCameras"]));
@@ -73,7 +73,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int iNumberOfControllers {
             get {
                 return ((int)(this["iNumberOfControllers"]));
@@ -97,7 +97,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.231")]
         public string sServerIpAddress {
             get {
                 return ((string)(this["sServerIpAddress"]));
@@ -109,7 +109,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.21")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.21")]
         public string sTriggerIpAddress {
             get {
                 return ((string)(this["sTriggerIpAddress"]));
@@ -121,7 +121,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.31")]
         public string sController1IpAddress {
             get {
                 return ((string)(this["sController1IpAddress"]));
@@ -133,7 +133,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.16.102")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.32")]
         public string sController2IpAddress {
             get {
                 return ((string)(this["sController2IpAddress"]));
@@ -188,6 +188,18 @@ namespace pimmsInterface.Properties {
             }
             set {
                 this["sVideoInfFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int iNumberOfRows {
+            get {
+                return ((int)(this["iNumberOfRows"]));
+            }
+            set {
+                this["iNumberOfRows"] = value;
             }
         }
     }

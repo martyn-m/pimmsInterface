@@ -12,25 +12,25 @@
       <Value Profile="(Default)">Controller</Value>
     </Setting>
     <Setting Name="iNumberOfCameras" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">16</Value>
+      <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="iNumberOfControllers" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="sSourceFilePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\VioController\source</Value>
     </Setting>
     <Setting Name="sServerIpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.16.1</Value>
+      <Value Profile="(Default)">192.168.1.231</Value>
     </Setting>
     <Setting Name="sTriggerIpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.16.21</Value>
+      <Value Profile="(Default)">192.168.1.21</Value>
     </Setting>
     <Setting Name="sController1IpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.16.2</Value>
+      <Value Profile="(Default)">192.168.1.31</Value>
     </Setting>
     <Setting Name="sController2IpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.16.102</Value>
+      <Value Profile="(Default)">192.168.1.32</Value>
     </Setting>
     <Setting Name="iServerPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">57343</Value>
@@ -43,6 +43,9 @@
     </Setting>
     <Setting Name="sVideoInfFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">clip0.inf</Value>
+    </Setting>
+    <Setting Name="iNumberOfRows" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>
