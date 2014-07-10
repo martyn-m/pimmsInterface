@@ -27,6 +27,7 @@
         <GroupBox Header="Reset" Canvas.Left="10" Canvas.Top="221" Height="57" Width="298">
             <Grid HorizontalAlignment="Left" Height="37" Margin="10,10,-2,-12" VerticalAlignment="Top" Width="278">
                 <Button x:Name="ResetButton" Content="Reset" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.293,-0.045" Click="ResetButton_Click"/>
+                <CheckBox x:Name="VideoCheckBox" Content="Video?" HorizontalAlignment="Left" Margin="100,3,0,0" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
     </Canvas>

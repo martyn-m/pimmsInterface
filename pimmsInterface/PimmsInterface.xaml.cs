@@ -331,8 +331,12 @@ namespace pimmsInterface
                         // Copy dummy video and inf into camera folder
                         String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
                         String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
-                        Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                        System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        if (VideoCheckBox.IsChecked == true)
+                        {
+                            Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                            System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        }
+                        Console.WriteLine("Copying {0} to {1}", sSourceVideoInfFile, sDestVideoInfFile);
                         System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
                     }
                     catch (Exception ex)
@@ -358,8 +362,12 @@ namespace pimmsInterface
                         // Copy dummy video and inf into camera folder
                         String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
                         String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
-                        Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                        System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        if (VideoCheckBox.IsChecked == true)
+                        {
+                            Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                            System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                        }
+                        Console.WriteLine("Copying {0} to {1}", sSourceVideoInfFile, sDestVideoInfFile);
                         System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
                     }
                     catch (Exception ex)
