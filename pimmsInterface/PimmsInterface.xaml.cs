@@ -68,6 +68,10 @@ namespace pimmsInterface
             triggerTimer.Elapsed += new ElapsedEventHandler(OnTriggerTimer);
             triggerTimer.Interval = 45000;
             triggerTimer.Enabled = false;
+
+            // Create a TCP Listener for messaging from the Stream Server
+            StreamListener listener = new StreamListener();
+            listener.StartListening();
         }
 
         /// <summary>
@@ -93,7 +97,7 @@ namespace pimmsInterface
             {
                 // open a connection to the pimms server
                 Console.WriteLine("Connecting Trigger");
-                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
+                //pimmsTrigger.Connect(sServerIpAddress, iServerPort);
 
                 // enable the poll response timer
                 triggerTimer.Enabled = true;
@@ -105,7 +109,7 @@ namespace pimmsInterface
 
                 // disconnect from the pimms server
                 Console.WriteLine("Disconnecting Trigger");
-                pimmsTrigger.Close();
+                //pimmsTrigger.Close();
             }
         }
 
@@ -120,7 +124,6 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger Poll Response");
-                //pimmsTrigger.SendTriggerPollResponse();
                 pimmsTrigger.SendTriggerMessage(0x07);
             }
             else
@@ -140,12 +143,17 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Trigger 1 Event");
-                //pimmsTrigger.SendTriggerEvent();
+                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
                 pimmsTrigger.SendTriggerMessage(0x02);
+                pimmsTrigger.Close();
             }
             else
             {
                 Console.WriteLine("Trigger 1 event failed: No open connection");
+                Console.WriteLine("Sending Trigger 1 Event");
+                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
+                pimmsTrigger.SendTriggerMessage(0x02);
+                pimmsTrigger.Close();
             }
         }
 
@@ -159,11 +167,17 @@ namespace pimmsInterface
             if (pimmsTrigger.Connected)
             {
                 Console.WriteLine("Sending Train 1 ride start event");
+                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
                 pimmsTrigger.SendTrainStartMessage(0, 0);
+                pimmsTrigger.Close();
             }
             else
             {
                 Console.WriteLine("Train 1 start failed: No open connection");
+                Console.WriteLine("Sending Train 1 ride start event");
+                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
+                pimmsTrigger.SendTrainStartMessage(0, 0);
+                pimmsTrigger.Close();
             }
         }
 
@@ -313,68 +327,84 @@ namespace pimmsInterface
                 }
                 for (int j = 1; j <= iNumRows; j++)
                 {
-                    // Copy battery.ini into camera logs folder
-                    String sThisCamera = i.ToString() + "-" + j.ToString() + "a";
-                    String sDestCamBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
-                    String sDestCamBatteryIniFile = System.IO.Path.Combine(sDestCamBatteryIniPath, sBatteryIniFile);
-
-                    try
+                    string[] positions = {"a","b"};
+                    foreach (string position in positions)
                     {
-                        if (!System.IO.Directory.Exists(sDestCamBatteryIniPath))
+                        // Copy battery.ini into camera logs folder
+                        String sThisCamera = i.ToString() + "-" + j.ToString() + position;
+                        String sDestCamBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
+                        String sDestCamBatteryIniFile = System.IO.Path.Combine(sDestCamBatteryIniPath, sBatteryIniFile);
+                        String sDownloadedVideoFileName = null;
+
+                        try
                         {
-                            System.IO.Directory.CreateDirectory(sDestCamBatteryIniPath);
+                            if (!System.IO.Directory.Exists(sDestCamBatteryIniPath))
+                            {
+                                System.IO.Directory.CreateDirectory(sDestCamBatteryIniPath);
+                            }
+
+                            Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestCamBatteryIniFile);
+                            System.IO.File.Copy(sSourceBatteryIniFile, sDestCamBatteryIniFile, true);
+
+                            // find the most recent mp4 file (the newest video) in the folder
+                            try
+                            {
+                                var directory = new DirectoryInfo(System.IO.Path.Combine(sBasePath, sThisCamera));
+                                var videoName = directory.GetFiles("*.mp4").OrderByDescending(f => f.LastWriteTime).First();
+                                sDownloadedVideoFileName = System.IO.Path.Combine(sBasePath, sThisCamera, videoName.Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                // There aren't any mp4 files
+                                //Console.WriteLine("Exception: {0}", ex);
+                             
+                            }
+                            
+                            // Copy dummy video and inf into camera folder
+                            String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
+                            String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
+
+                            // Delete clip0.mpg
+                            if (DeleteClip0CheckBox.IsChecked == true)
+                            {
+                                Console.WriteLine("Deleting {0}", sDestVideoFile);
+                                System.IO.File.Delete(sDestVideoFile);
+                            }
+
+                            if (VideoCheckBox.IsChecked == true)
+                            {
+                                // Use a dummy source video file
+                                Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                                System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                            }
+                            else
+                            {
+                                // Attempt to copy the newest mp4 file in the hot folder to clip0.mpg
+                                if (!String.IsNullOrEmpty(sDownloadedVideoFileName))
+                                {
+                                    Console.WriteLine("Copying {0} to {1}", sDownloadedVideoFileName, sDestVideoFile);
+                                    System.IO.File.Copy(sDownloadedVideoFileName, sDestVideoFile, true);
+
+                                    // Delete the old stream video file
+                                    if (DeleteStreamCheckBox.IsChecked == true)
+                                    {
+                                        Console.WriteLine("Deleting {0}", sDownloadedVideoFileName);
+                                        System.IO.File.Delete(sDownloadedVideoFileName);
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No mp4 files to copy in {0}", sThisCamera);
+                                }
+                            }
+                            Console.WriteLine("Copying {0} to {1}", sSourceVideoInfFile, sDestVideoInfFile);
+                            System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
                         }
-
-                        Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestCamBatteryIniFile);
-                        System.IO.File.Copy(sSourceBatteryIniFile, sDestCamBatteryIniFile, true);
-
-                        // Copy dummy video and inf into camera folder
-                        String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
-                        String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
-                        if (VideoCheckBox.IsChecked == true)
+                        catch (Exception ex)
                         {
-                            Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                            System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                            Console.WriteLine("Exception: {0}", ex);
                         }
-                        Console.WriteLine("Copying {0} to {1}", sSourceVideoInfFile, sDestVideoInfFile);
-                        System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Exception: {0}", ex);
-                    }
- 
-                    // Copy battery.ini into camera logs folder
-                    sThisCamera = i.ToString() + "-" + j.ToString() + "b";
-                    sDestCamBatteryIniPath = System.IO.Path.Combine(sBasePath, sThisCamera, "logs");
-                    sDestCamBatteryIniFile = System.IO.Path.Combine(sDestCamBatteryIniPath, sBatteryIniFile);
-
-                    try
-                    {
-                        if (!System.IO.Directory.Exists(sDestCamBatteryIniPath))
-                        {
-                            System.IO.Directory.CreateDirectory(sDestCamBatteryIniPath);
-                        }
-
-                        Console.WriteLine("Copying {0} to {1}", sSourceBatteryIniFile, sDestCamBatteryIniFile);
-                        System.IO.File.Copy(sSourceBatteryIniFile, sDestCamBatteryIniFile, true);
-
-                        // Copy dummy video and inf into camera folder
-                        String sDestVideoFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoFile);
-                        String sDestVideoInfFile = System.IO.Path.Combine(sBasePath, sThisCamera, sVideoInfFile);
-                        if (VideoCheckBox.IsChecked == true)
-                        {
-                            Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                            System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
-                        }
-                        Console.WriteLine("Copying {0} to {1}", sSourceVideoInfFile, sDestVideoInfFile);
-                        System.IO.File.Copy(sSourceVideoInfFile, sDestVideoInfFile, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Exception: {0}", ex);
-                    }
-
                 }       
             }
                

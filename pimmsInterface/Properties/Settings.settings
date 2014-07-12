@@ -24,7 +24,7 @@
       <Value Profile="(Default)">192.168.1.231</Value>
     </Setting>
     <Setting Name="sTriggerIpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.1.21</Value>
+      <Value Profile="(Default)">192.168.1.86</Value>
     </Setting>
     <Setting Name="sController1IpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.1.31</Value>
@@ -45,7 +45,10 @@
       <Value Profile="(Default)">clip0.inf</Value>
     </Setting>
     <Setting Name="iNumberOfRows" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="iListenPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">57344</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -109,7 +109,7 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.21")]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.86")]
         public string sTriggerIpAddress {
             get {
                 return ((string)(this["sTriggerIpAddress"]));
@@ -193,13 +193,25 @@ namespace pimmsInterface.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int iNumberOfRows {
             get {
                 return ((int)(this["iNumberOfRows"]));
             }
             set {
                 this["iNumberOfRows"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("57344")]
+        public int iListenPort {
+            get {
+                return ((int)(this["iListenPort"]));
+            }
+            set {
+                this["iListenPort"] = value;
             }
         }
     }
