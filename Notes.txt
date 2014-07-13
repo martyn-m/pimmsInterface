@@ -1,0 +1,33 @@
+TO DO:
+
+* Move reset functionality out of reset button method into it's own class, and tidy up
+	* reset camera and reset controller methods
+* re-arrange pimmsTcpClient class to allow a single object to be created and re-used in main code for all functions
+* cycle through a limited pool of source ports rather than incrementing indefinitely (will eventually break)
+* allow dynamic scaling of number of trains (at start time, as defined in settings)
+* add error handling
+* add TCP (or other) server to allow commands from Stream Server
+	* may be easier to write separate app for production use and keep GUI completely separate?
+
+#### PimmsTcpClient ####
+properties
+* localEndpoint
+* remoteEndpoint
+* bool connected (?)
+* stream
+* client
+
+
+methods
+* constructor
+* setLocalEndpoint(string ipAddress, int port)
+* setRemoteEndpoint(string ipAddress, int port)
+* connect
+* close
+* startRide(int train)
+* logOn(int train)
+* sendTrainStartMsg(int train)
+* sendTriggerMsg(byte opcode)
+* sendLogOnMsg()
+
+
