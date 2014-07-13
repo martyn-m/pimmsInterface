@@ -50,5 +50,8 @@
     <Setting Name="iListenPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">57344</Value>
     </Setting>
+    <Setting Name="sController3IpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.33</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

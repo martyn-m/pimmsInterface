@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace pimmsInterface.Properties {
+namespace PimmsInterface.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -212,6 +212,18 @@ namespace pimmsInterface.Properties {
             }
             set {
                 this["iListenPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.33")]
+        public string sController3IpAddress {
+            get {
+                return ((string)(this["sController3IpAddress"]));
+            }
+            set {
+                this["sController3IpAddress"] = value;
             }
         }
     }

@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Timers;
 
-namespace pimmsInterface
+namespace PimmsInterface
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,261 +23,39 @@ namespace pimmsInterface
     public partial class MainWindow : Window
     {
         // PiMMS Server Details
-        String sServerIpAddress = pimmsInterface.Properties.Settings.Default.sServerIpAddress;
-        int iServerPort = pimmsInterface.Properties.Settings.Default.iServerPort;
+        String sServerIpAddress = PimmsInterface.Properties.Settings.Default.sServerIpAddress;
+        int iServerPort = PimmsInterface.Properties.Settings.Default.iServerPort;
 
         // Local IPs to use for PiMMS comms
-        String sTriggerIpAddress = pimmsInterface.Properties.Settings.Default.sTriggerIpAddress;
-        String sController1IpAddress = pimmsInterface.Properties.Settings.Default.sController1IpAddress;
-        String sController2IpAddress = pimmsInterface.Properties.Settings.Default.sController2IpAddress;
+        String sTriggerIpAddress = PimmsInterface.Properties.Settings.Default.sTriggerIpAddress;
+        String sController1IpAddress = PimmsInterface.Properties.Settings.Default.sController1IpAddress;
+        String sController2IpAddress = PimmsInterface.Properties.Settings.Default.sController2IpAddress;
+        String sController3IpAddress = PimmsInterface.Properties.Settings.Default.sController3IpAddress;
 
         // Paths to files
-        String sBasePath = pimmsInterface.Properties.Settings.Default.sBasePath;
-        String sCameraFolder = pimmsInterface.Properties.Settings.Default.sCameraFolder;
-        String sControllerFolder = pimmsInterface.Properties.Settings.Default.sControllerFolder;
-        String sSourceFilePath = pimmsInterface.Properties.Settings.Default.sSourceFilePath;
-        String sBatteryIniFile = pimmsInterface.Properties.Settings.Default.sBatteryIniFile;
-        String sVideoFile = pimmsInterface.Properties.Settings.Default.sVideoFile;
-        String sVideoInfFile = pimmsInterface.Properties.Settings.Default.sVideoInfFile;
+        String sBasePath = PimmsInterface.Properties.Settings.Default.sBasePath;
+        String sCameraFolder = PimmsInterface.Properties.Settings.Default.sCameraFolder;
+        String sControllerFolder = PimmsInterface.Properties.Settings.Default.sControllerFolder;
+        String sSourceFilePath = PimmsInterface.Properties.Settings.Default.sSourceFilePath;
+        String sBatteryIniFile = PimmsInterface.Properties.Settings.Default.sBatteryIniFile;
+        String sVideoFile = PimmsInterface.Properties.Settings.Default.sVideoFile;
+        String sVideoInfFile = PimmsInterface.Properties.Settings.Default.sVideoInfFile;
         
         // Number of Cameras and Controllers to initialise
-        int iNumCameras = pimmsInterface.Properties.Settings.Default.iNumberOfCameras;
-        int iNumControllers = pimmsInterface.Properties.Settings.Default.iNumberOfControllers;
-        int iNumRows = pimmsInterface.Properties.Settings.Default.iNumberOfRows;
+        int iNumCameras = PimmsInterface.Properties.Settings.Default.iNumberOfCameras;
+        int iNumControllers = PimmsInterface.Properties.Settings.Default.iNumberOfControllers;
+        int iNumRows = PimmsInterface.Properties.Settings.Default.iNumberOfRows;
         
         // Declare PimmsTCPClient objects    
-        PimmsTCPClient pimmsTrigger;
-        PimmsTCPClient pimmsController1;
-        PimmsTCPClient pimmsController2;
-
-        // Create a timer to periodically send trigger poll responses
-        Timer triggerTimer;
+        PimmsTcpClient pimmsClient;
         
 
         public MainWindow()
         {
             InitializeComponent();
             
-            // Create new PimmsTCPCLient objects to manage communications from various compnents to a PiMMS server
-            pimmsTrigger = new PimmsTCPClient(sTriggerIpAddress); 
-            pimmsController1 = new PimmsTCPClient(sController1IpAddress);
-            pimmsController2 = new PimmsTCPClient(sController2IpAddress);
-
-            // Set up the timer for periodic trigger poll responses, but leave it disabled
-            triggerTimer = new Timer();
-            triggerTimer.Elapsed += new ElapsedEventHandler(OnTriggerTimer);
-            triggerTimer.Interval = 45000;
-            triggerTimer.Enabled = false;
-
-            // Create a TCP Listener for messaging from the Stream Server
-            StreamListener listener = new StreamListener();
-            listener.StartListening();
-        }
-
-        /// <summary>
-        /// Timer to periodically send a poll response message to the PiMMS server to keep the server<->trigger connection alive.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTriggerTimer(object sender, ElapsedEventArgs e)
-        {
-            Console.WriteLine("Sending periodic trigger poll response");
-            pimmsTrigger.SendTriggerMessage(0x07);
-        }
-
-        /// <summary>
-        /// Connects or disconnects the trigger PimmsTCPClient
-        /// Additionally enables the triggerTimer as necessary to periodically send trigger poll responses when connected.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TrigChk_CheckedChanged(object sender, RoutedEventArgs e)
-        {
-            if(TrigChk.IsChecked == true)
-            {
-                // open a connection to the pimms server
-                Console.WriteLine("Connecting Trigger");
-                //pimmsTrigger.Connect(sServerIpAddress, iServerPort);
-
-                // enable the poll response timer
-                triggerTimer.Enabled = true;
-            }
-            else 
-            {
-                // disable the poll response timer
-                triggerTimer.Enabled = false;
-
-                // disconnect from the pimms server
-                Console.WriteLine("Disconnecting Trigger");
-                //pimmsTrigger.Close();
-            }
-        }
-
-        /// <summary>
-        /// Manaully send a trigger poll response message to the PiMMS server
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TrigPollBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Send a poll response message to the pimms server
-            if (pimmsTrigger.Connected)
-            {
-                Console.WriteLine("Sending Trigger Poll Response");
-                pimmsTrigger.SendTriggerMessage(0x07);
-            }
-            else
-            {
-                Console.WriteLine("Poll response failed: No open connection");
-            }
-        }
-
-        /// <summary>
-        /// Manually send a trigger 1 event message to the PiMMS server.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TrigEventBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Send a Trigger event message to the pimms server
-            if (pimmsTrigger.Connected)
-            {
-                Console.WriteLine("Sending Trigger 1 Event");
-                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
-                pimmsTrigger.SendTriggerMessage(0x02);
-                pimmsTrigger.Close();
-            }
-            else
-            {
-                Console.WriteLine("Trigger 1 event failed: No open connection");
-                Console.WriteLine("Sending Trigger 1 Event");
-                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
-                pimmsTrigger.SendTriggerMessage(0x02);
-                pimmsTrigger.Close();
-            }
-        }
-
-        /// <summary>
-        /// Manually send a train 1 started message to the PiMMS server.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TrigT1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (pimmsTrigger.Connected)
-            {
-                Console.WriteLine("Sending Train 1 ride start event");
-                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
-                pimmsTrigger.SendTrainStartMessage(0, 0);
-                pimmsTrigger.Close();
-            }
-            else
-            {
-                Console.WriteLine("Train 1 start failed: No open connection");
-                Console.WriteLine("Sending Train 1 ride start event");
-                pimmsTrigger.Connect(sServerIpAddress, iServerPort);
-                pimmsTrigger.SendTrainStartMessage(0, 0);
-                pimmsTrigger.Close();
-            }
-        }
-
-        /// <summary>
-        /// Manually send a train 2 started message to the PiMMS server.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TrigT2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (pimmsTrigger.Connected)
-            {
-                Console.WriteLine("Sending Train 2 ride start event");
-                pimmsTrigger.SendTrainStartMessage(1, 0);
-            }
-            else
-            {
-                Console.WriteLine("Train 2 start failed: No open connection");
-            }
-        }
-
-        /// <summary>
-        /// Open or close a TCP connection to the PiMMS Server for controller 2.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Controller1Chk_CheckedChanged(object sender, RoutedEventArgs e)
-        {
-            if (Controller1Chk.IsChecked == true)
-            {
-                // Open a connection to the PiMMS server using the controller IP address
-                Console.WriteLine("Connecting Controller 1");
-                pimmsController1.Connect(sServerIpAddress, iServerPort);
-            }
-            else
-            {
-                // Disconnect the controller 
-                Console.WriteLine("Disconnecting Controller 1");
-                pimmsController1.Close();
-            }
-        }
-
-        /// <summary>
-        /// Send a log on message from Controller 2
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Controller1LogOnBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Send a log on message to the PiMMS server
-            if (pimmsController1.Connected)
-            {
-                Console.WriteLine("Logging On (1)");
-                pimmsController1.SendLogOnMessage();
-            }
-            else
-            {
-                Console.WriteLine("Log on (1) failed: no open connection");
-            }
-            
-        }
-
-        /// <summary>
-        /// Open or close a TCP connection to the PiMMS Server for controller 2.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Controller2Chk_CheckedChanged(object sender, RoutedEventArgs e)
-        {
-            if (Controller2Chk.IsChecked == true)
-            {
-                // Open a connection to the PiMMS server using the controller IP address
-                Console.WriteLine("Connecting Controller 2");
-                pimmsController2.Connect(sServerIpAddress, iServerPort);
-            }
-            else
-            {
-                // Disconnect the controller 
-                Console.WriteLine("Disconnecting Controller 2");
-                pimmsController2.Close();
-            }
-        }
-
-        /// <summary>
-        /// Send a log on message from Controller 2
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Controller2LogOnBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Send a log on message to the PiMMS server
-            if (pimmsController2.Connected)
-            {
-                Console.WriteLine("Logging On (2)");
-                pimmsController2.SendLogOnMessage();
-            }
-            else
-            {
-                Console.WriteLine("Log on (2) failed: no open connection");
-            }
+            // Create a new PimmsTCPCLient object to manage communications from various components to a PiMMS server
+            pimmsClient = new PimmsTcpClient(sServerIpAddress, iServerPort);
             
         }
 
@@ -296,6 +74,8 @@ namespace pimmsInterface
         /// For each controller hot folder:
         /// Copies a dummy \logs\battery.ini file from a source location to the hot folder,
         ///     not strictly necessary for system functionality, but prevents error mesages in PiMMS
+        ///     
+        /// TO DO: put all of this functionality into a class rather than directly in the button click method.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -371,7 +151,7 @@ namespace pimmsInterface
                                 System.IO.File.Delete(sDestVideoFile);
                             }
 
-                            if (VideoCheckBox.IsChecked == true)
+                            if (SampleVideoCheckBox.IsChecked == true)
                             {
                                 // Use a dummy source video file
                                 Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
@@ -408,6 +188,49 @@ namespace pimmsInterface
                 }       
             }
                
+        }
+
+        private void StartBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            
+            // Send the train start message for train 1
+            Console.WriteLine("Sending Train 1 ride start event");
+            pimmsClient.StartRide(1, sTriggerIpAddress);
+        }
+
+        private void LogOnBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            // Log On
+            Console.WriteLine("Logging On (1)");
+            pimmsClient.LogOn(sController1IpAddress);
+        }
+
+        private void StartBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            // Send the train start message for train 1
+            Console.WriteLine("Sending Train 2 ride start event");
+            pimmsClient.StartRide(2, sTriggerIpAddress);
+        }
+
+        private void LogOnBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            // Log On
+            Console.WriteLine("Logging On (2)");
+            pimmsClient.LogOn(sController2IpAddress);
+        }
+
+        private void StartBtn3_Click(object sender, RoutedEventArgs e)
+        {
+            // Send the train start message for train 3
+            Console.WriteLine("Sending Train 3 ride start event");
+            pimmsClient.StartRide(3, sTriggerIpAddress);
+        }
+
+        private void LogOnBtn3_Click(object sender, RoutedEventArgs e)
+        {
+            // Log On
+            Console.WriteLine("Logging On (1)");
+            pimmsClient.LogOn(sController2IpAddress);
         }
     }
 }

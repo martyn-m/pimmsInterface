@@ -1,35 +1,32 @@
-﻿<Window x:Name="InterfaceWindow" x:Class="pimmsInterface.MainWindow"
+﻿<Window x:Name="InterfaceWindow" x:Class="PimmsInterface.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PiMMS Interface" Height="389.164" Width="342.134" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" ResizeMode="NoResize">
-    <Canvas Height="165" Margin="10,10,4,0" VerticalAlignment="Top">
-        <GroupBox Header="Trigger" Canvas.Left="10" Canvas.Top="10" Height="83" Width="298">
-            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="56" Width="298" Margin="0,0,0,0">
-                <CheckBox x:Name="TrigChk" Content="Connect" Checked="TrigChk_CheckedChanged" Unchecked="TrigChk_CheckedChanged" Margin="10,10,52,20"/>
-                <Button x:Name="TrigPollBtn" Content="Poll Response" Click="TrigPollBtn_Click" Margin="93,7,120,27" Height="22" Width="85"/>
-                <Button x:Name="TrigEventBtn" Content="Trigger Event" Click="TrigEventBtn_Click" Margin="183,7,30,27" Height="22" Width="85"/>
-                <Button x:Name="TrigT1Btn" Content="Train 1 Start" Click="TrigT1Btn_Click" Margin="93,34,120,0" Height="22" Width="85"/>
-                <Button x:Name="TrigT2Btn" Content="Train 2 Start" Click="TrigT2Btn_Click" Margin="183,34,30,0" Width="85" Height="22"/>
-            </Grid>
-        </GroupBox>
-        <GroupBox Header="Controller1" Canvas.Left="10" Canvas.Top="98" Height="58" Width="298">
+        Title="PiMMS Interface" Height="361.164" Width="276.134" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" ResizeMode="NoResize">
+    <Canvas Height="316" Margin="10,10,4,0" VerticalAlignment="Top">
+        <GroupBox Header="Train 1" Canvas.Left="10" Canvas.Top="10" Height="58" Width="229">
             <Grid HorizontalAlignment="Left" Height="46" VerticalAlignment="Top" Width="288" Margin="0,0,-2,-10">
-                <Button x:Name="Con1LogOnBtn" Content="Log On" Click="Controller1LogOnBtn_Click" Margin="95,7,108,17" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273"/>
-                <CheckBox x:Name="Controller1Chk" Content="Connect" Checked="Controller1Chk_CheckedChanged" Unchecked="Controller1Chk_CheckedChanged" Margin="10,10,198,14" RenderTransformOrigin="1.1,1.35"/>
+                <Button x:Name="StartBtn1" Content="Start Ride" Margin="10,10,193,14" Width="85" Height="22" Click="StartBtn1_Click"/>
+                <Button x:Name="LogOnBtn1" Content="Log On" Margin="100,10,103,14" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273" Click="LogOnBtn1_Click"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Controller2" Canvas.Left="10" Canvas.Top="158" Height="58" Width="298">
+        <GroupBox Header="Train 2" Canvas.Left="10" Canvas.Top="73" Height="58" Width="229">
             <Grid HorizontalAlignment="Left" Height="46" VerticalAlignment="Top" Width="288" Margin="0,0,-2,-10">
-                <Button x:Name="Con2LogOnBtn" Content="Log On" Click="Controller2LogOnBtn_Click" Margin="95,7,108,17" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273"/>
-                <CheckBox x:Name="Controller2Chk" Content="Connect" Checked="Controller2Chk_CheckedChanged" Unchecked="Controller2Chk_CheckedChanged" Margin="10,10,198,14" RenderTransformOrigin="1.1,1.35"/>
+                <Button x:Name="StartBtn2" Content="Start Ride" Margin="10,10,193,14" Width="85" Height="22" Click="StartBtn2_Click"/>
+                <Button x:Name="LogOnBtn2" Content="Log On" Margin="100,10,103,14" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273" Click="LogOnBtn2_Click"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Reset" Canvas.Left="10" Canvas.Top="221" Height="103" Width="298">
+        <GroupBox Header="Train 3" Canvas.Left="10" Canvas.Top="136" Height="61" Width="229">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="56" Width="298" Margin="0,0,-12,0">
+                <Button x:Name="StartBtn3" Content="Start Ride" Margin="10,10,203,24" Height="22" Width="85" Click="StartBtn3_Click"/>
+                <Button x:Name="LogOnBtn3" Content="Log On" Margin="100,10,113,24" Width="85" Height="22" RenderTransformOrigin="0.541,-0.273" Click="LogOnBtn3_Click"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Reset" Canvas.Left="10" Canvas.Top="202" Height="103" Width="229">
             <Grid HorizontalAlignment="Left" Height="72" Margin="10,10,-2,-1" VerticalAlignment="Top" Width="278">
-                <Button x:Name="ResetButton" Content="Reset" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.293,-0.045" Click="ResetButton_Click"/>
-                <CheckBox x:Name="VideoCheckBox" Content="Use Sample Video" HorizontalAlignment="Left" Margin="100,3,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="DeleteStreamCheckBox" Content="Delete Stream File" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top" RenderTransformOrigin="-2.333,3.125"/>
-                <CheckBox x:Name="DeleteClip0CheckBox" Content="Delete clip0.mpg" HorizontalAlignment="Left" Margin="145,46,0,0" VerticalAlignment="Top" Width="123"/>
+                <Button x:Name="ResetButton" Content="Reset" HorizontalAlignment="Left" Margin="128,21,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.293,-0.045" Click="ResetButton_Click"/>
+                <CheckBox x:Name="SampleVideoCheckBox" Content="Use Sample Video" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <CheckBox x:Name="DeleteStreamCheckBox" Content="Delete Stream File" HorizontalAlignment="Left" Margin="0,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="-2.333,3.125"/>
+                <CheckBox x:Name="DeleteClip0CheckBox" Content="Delete clip0.mpg" HorizontalAlignment="Left" Margin="0,42,0,0" VerticalAlignment="Top" Width="123"/>
             </Grid>
         </GroupBox>
     </Canvas>

@@ -6,76 +6,148 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-namespace pimmsInterface
+namespace PimmsInterface
 {
     /// <summary>
-    /// PiMMSTCPClient
+    /// PimmsTcpClient
     /// Provides an interface for TCP communications with a PiMMS server for trigger and controller messaging.
-    /// A separate TCPClient instance must be created for each trigger/controller function, 
-    /// each bound to a separate local network interface/IP address.
-    ///     one trigger per system
-    ///     one controller per train
     /// </summary>
-    class PimmsTCPClient
+    class PimmsTcpClient
     {
-        private TcpClient pimmsClient;
-        public bool Connected = false;
-        private IPEndPoint ipLocalEndPoint;
-        private NetworkStream stream;
-        private String sLocalAddress;
-        private int iPort;
+        private IPEndPoint ipRemoteEndPoint;
+        private int iStartPort;
+        private int iEndPort;
+        private int iCurrentLocalPort;
 
         /// <summary>
-        /// PimmsTCPClient Constructor
+        /// Create a new PimmsTcpClient object for communication with a PiMMS server
         /// </summary>
-        /// <param name="sLocalIpAddress">Local IP address to bind this PimmsTCPClient object to</param>
-        public PimmsTCPClient(String sLocalIpAddress)
+        /// <param name="sServerAddress">The IP Address of the PiMMS server</param>
+        /// <param name="iServerPort">The port the PiMMS server listens on (default 57343)</param>
+        public PimmsTcpClient(String sServerAddress, int iServerPort)
         {
-            // Use local port 12345 for the first connection
-            iPort = 12345;
-            sLocalAddress = sLocalIpAddress;
+            // Use local port 44000 for the first connection, and increment up to iEndPort before re-using local ports.
+            iCurrentLocalPort = iStartPort = 44000;
+            iEndPort = 44100;
+
+            // set the remote endpoint to connect to the PiMMS Server
+            if (!SetRemoteEndpoint(sServerAddress, iServerPort))
+            {
+                // something went wrong
+            }
         }
 
         /// <summary>
-        /// Open the connection to the PiMMS server
+        /// Sets the remote IPEndpoint for use by all connections made by this PimmsTcpClient
         /// </summary>
-        /// <param name="sServerAddress">IP address of the remote PiMMS Server</param>
-        /// <param name="iServerPort">Remote port of the PiMMS server, must match the value configured in PiMMS in SYSTEM_PARAMETERS/iTcpIpPort (default 57343)</param>
-        public void Connect(String sServerAddress, int iServerPort)
+        /// <param name="ipAddress">The destination IP Address to connect to</param>
+        /// <param name="iPort">The destination port</param>
+        /// <returns>true if OK, false otherwise</returns>
+        private bool SetRemoteEndpoint(String ipAddress, int iPort)
         {
+            try
+            {
+                ipRemoteEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), iPort);
+                return true;
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("WARNING: ArgumentNullException while setting server IP address");
+                return false;
+            }
+            catch (ArgumentOutOfRangeException e){
+                Console.WriteLine("WARNING: ArgumentOutOfRangeException while setting server port");
+                return false;
+            }
+            
+        }
+
+        /// <summary>
+        /// Informs the PiMMS server that the specified train has started a ride
+        /// </summary>
+        /// <param name="iTrain">The train ID (1 to N)</param>
+        /// <param name="sIpAddress">The local IP address configured for this train</param>
+        /// <returns>true if OK, false otherwise</returns>
+        public bool StartRide(int iTrain, String sIpAddress)
+        {
+            try
+            {
+                TcpClient client = Connect(sIpAddress);
+                SendTrainStartMessage((iTrain - 1), 0, client);
+                SendTriggerMessage(0x02, client);
+                client.Close();
+                return true;
+            }
+            catch (Exception e)
+            {
+                // Something went wrong
+                // TO DO: flesh out this exception handler
+                Console.WriteLine("WARNING: failed to send ride start message");
+                return false;
+            }
+            
+        }
+
+        /// <summary>
+        /// Informs the PiMMS server that a train has completed the ride and files are ready to download
+        /// </summary>
+        /// <param name="sIpAddress">The local IP address configured for this train</param>
+        /// <returns>true if OK, false otherwise</returns>
+        public bool LogOn(String sIpAddress)
+        {
+            bool result = false;
+            using (TcpClient client = Connect(sIpAddress))
+            {
+                if (SendLogOnMessage(client))
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Creates a new TCP connection to the PiMMS server
+        /// </summary>
+        /// <param name="sServerAddress">The local IP address to use for this connection</param>
+        /// <returns>A TcpClient object using the specified local endpoint if successful, null if not</returns>
+        private TcpClient Connect(String sIpAddress)
+        {
+            TcpClient client;
             try 
             {
-                if (!Connected)
+                // Create an IP endpoint for the local IP/port to use for this connection
+                IPEndPoint ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sIpAddress), iCurrentLocalPort);
+
+                // Increment the local port number for the next connection to avoid issues with the port staying in TIME_WAIT after a disconnect
+                if (iCurrentLocalPort >= iEndPort)
                 {
-                    // Create an IP endpoint for the local IP/port to use for this connection
-                    ipLocalEndPoint = new IPEndPoint(IPAddress.Parse(sLocalAddress), iPort);
-
-                    // Increment the local port number for the next connection to avoid issues with the port staying in TIME_WAIT after a disconnect
-                    iPort++;
-
-                    // Create a new TcpClient bound to the specified local endpoint
-                    Console.WriteLine("Creating new TcpClient bound to {0}", ipLocalEndPoint.ToString());
-                    pimmsClient = new TcpClient(ipLocalEndPoint);
-                    
-                    // Connect to the remote PiMMS server
-                    Console.WriteLine("Connecting to {0}:{1}", sServerAddress, iServerPort);
-                    pimmsClient.Connect(IPAddress.Parse(sServerAddress), iServerPort);
-
-                    // Get a client stream for reading and writing
-                    stream = pimmsClient.GetStream();
-
-                    Connected = true;
+                    // Reset back to the start port
+                    iCurrentLocalPort = iStartPort;
                 }
                 else
                 {
-                    Console.WriteLine("Connection attempt to {0}:{1} recieved when already connected", sServerAddress, iServerPort);
+                    iCurrentLocalPort++;
                 }
+
+                // Create a new TcpClient bound to the specified local endpoint
+                Console.WriteLine("Creating new TcpClient bound to {0}", ipLocalEndPoint.ToString());
+                client = new TcpClient(ipLocalEndPoint);
+                    
+                // Connect to the remote PiMMS server
+                Console.WriteLine("Connecting to PiMMS server {0}", ipRemoteEndPoint.ToString());
+                client.Connect(ipRemoteEndPoint);
 
             }
             catch (Exception e)
             {
+                // TO DO: flesh out this exception handler
                 Console.WriteLine("Exception: {0}", e);
+                client = null;
             }
+            return client;
         }
 
         /// <summary>
@@ -83,25 +155,34 @@ namespace pimmsInterface
         /// Can be either a trigger event message or a trigger poll response message
         /// </summary>
         /// <param name="bOpcode">Single byte message OpCode, 0x02 for trigger event, 0x07 for poll response</param>
-        public void SendTriggerMessage(byte bOpcode)
+        /// <param name="client">A TcpClient object to send the message with</param>
+        /// <returns>true if OK, false otherwise</returns>
+        private bool SendTriggerMessage(byte bOpcode, TcpClient client)
         {
+            bool result = false;
+            // trigger message data as raw hex bytes, never needs to vary in Vio system (apart from opcode byte)
+            // __MSG_TYPE = 02
+            // __MSG_OPCODE = bOpcode
+            Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x0c,
+                                  0x00, 0x00, 0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0f };
+            // Set the OpCode byte
+            data[16] = bOpcode;
+
             try
             {
-                // trigger message data as raw hex bytes, never needs to vary in Vio system (apart from opcode byte)
-                // __MSG_TYPE = 02
-                // __MSG_OPCODE = bOpcode
-                Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x0c,
-                                  0x00, 0x00, 0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x0f };
-                // Set the OpCode byte
-                data[16] = bOpcode;
-
-                // Write the data to the network stream
-                stream.Write(data, 0, data.Length);
+                using (NetworkStream stream = client.GetStream())
+                {
+                    // Write the data to the network stream
+                    stream.Write(data, 0, data.Length);
+                }
+                result = true;
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: {0}", e);
             }
+            return result;
         }
  
         /// <summary>
@@ -111,28 +192,37 @@ namespace pimmsInterface
         /// </summary>
         /// <param name="iTrainID">integer ID of the train that has just started the ride</param>
         /// <param name="iControllerID">integer ID of the controller seen by the trigger. Can always use 0 in Vio system</param>
-        public void SendTrainStartMessage(int iTrainID, int iControllerID)
+        /// <param name="client">A TcpClient object to send the message with</param>
+        /// <returns>true if OK, false otherwise</returns>
+        private bool SendTrainStartMessage(int iTrainID, int iControllerID, TcpClient client)
         {
+            bool result = false;
+            
+            // message data as raw hex
+            // __MSG_TYPE = 02
+            // __MSG_OPCODE = 01
+            // train,controller "0,0"
+            Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00,
+                                0x00, 0x00, 0x05, 0x02, 0x01, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x12 };
+            // set train ID
+            data[17] = Encoding.ASCII.GetBytes(iTrainID.ToString())[0];
+            // set controller ID
+            data[19] = Encoding.ASCII.GetBytes(iControllerID.ToString())[0];
+            
             try
             {
-                // message data as raw hex
-                // __MSG_TYPE = 02
-                // __MSG_OPCODE = 01
-                // train,controller "0,0"
-                Byte[] data = { 0x23, 0x21, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00,
-                                0x00, 0x00, 0x05, 0x02, 0x01, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x12 };
-                // set train ID
-                data[17] = Encoding.ASCII.GetBytes(iTrainID.ToString())[0];
-                // set controller ID
-                data[19] = Encoding.ASCII.GetBytes(iControllerID.ToString())[0];
-
-                // Write the data to the network stream
-                stream.Write(data, 0, data.Length);
+                using (NetworkStream stream = client.GetStream())
+                {
+                    // Write the data to the network stream
+                    stream.Write(data, 0, data.Length);
+                }              
+                result = true;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: {0}", e);
             }
+            return result;
         }
 
         /// <summary>
@@ -142,18 +232,20 @@ namespace pimmsInterface
         /// The message content can be a fixed value for the Vio system as the content refers to server-train functionality
         /// not used in the Vio system
         /// </summary>
-        public void SendLogOnMessage()
+        /// <param name="client">A TcpClient object to send the message with</param>
+        /// <returns>true if OK, false otherwise</returns>
+        private bool SendLogOnMessage(TcpClient client)
         {
-            try
-            {
-                // log on message data as raw hex
-                // __MSG_TYPE = 04
-                // __MSG_OPCODE = 00
-                // SSID = VioCamera
-                // OK = true
-                // TEST = false
-                // __MSG_STRING = ""
-                byte[] data = {
+            bool result = false;
+
+            // log on message data as raw hex
+            // __MSG_TYPE = 04
+            // __MSG_OPCODE = 00
+            // SSID = VioCamera
+            // OK = true
+            // TEST = false
+            // __MSG_STRING = ""
+            byte[] data = {
 	                0x23, 0x21, 0x00, 0x00, 0x00, 0xBF, 0x00, 0x00, 0x00, 0x1C, 0x00, 0x00,
 	                0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x04, 0x00, 0x4F, 0x00, 0x4B, 0x00,
 	                0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x08, 0x00, 0x53, 0x00,
@@ -172,47 +264,27 @@ namespace pimmsInterface
 	                0x54, 0x00, 0x45, 0x00, 0x53, 0x00, 0x54, 0x00, 0x00, 0x00, 0x01, 0x00,
 	                0x00, 0x00, 0x00, 0x00, 0xBF
                 };
-                
-                // Write the data to the network stream
-                stream.Write(data, 0, data.Length);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception: {0}", e);
-            }
-        }
-
-        /// <summary>
-        /// Close the TCP connection
-        /// </summary>
-        public void Close()
-        {
+            
             try
             {
-                if (Connected)
+                using (NetworkStream stream = client.GetStream())
                 {
-                    // Close the connection
-                    Console.WriteLine("Closing connection");
-                    stream.Close();
-                    pimmsClient.Close();
-                    
-                    Connected = false;
+                    // Write the data to the network stream
+                    stream.Write(data, 0, data.Length);
                 }
-                else
-                {
-                    Console.WriteLine("Unable to close connection, none open");
-                }
+                result = true;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: {0}", e);
-            }                 
+            }
+            return result;
         }
 
         /// <summary>
         /// Destructor
         /// </summary>
-        ~PimmsTCPClient()
+        ~PimmsTcpClient()
         {
             Console.WriteLine("Aaaargh, I'm being eaten!");
         }
