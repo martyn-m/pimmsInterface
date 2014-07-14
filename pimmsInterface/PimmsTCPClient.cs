@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows;
 
 namespace PimmsInterface
 {
@@ -33,7 +34,11 @@ namespace PimmsInterface
             // set the remote endpoint to connect to the PiMMS Server
             if (!SetRemoteEndpoint(sServerAddress, iServerPort))
             {
-                // something went wrong
+                // something went wrong, should prompt user to check settings and exit.
+                MessageBoxResult result = MessageBox.Show(
+                    "Unable to set the PiMMS Server IP/Port, please check the settings and try again.",
+                    "Warning");
+                Application.Current.Shutdown();
             }
         }
 
