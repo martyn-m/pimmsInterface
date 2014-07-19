@@ -75,19 +75,31 @@ namespace PimmsInterface
         /// <returns>true if OK, false otherwise</returns>
         public bool StartRide(int iTrain, String sIpAddress)
         {
+            bool result = false;
             try
             {
+                using (TcpClient client = Connect(sIpAddress))
+                {
+                    NetworkStream stream = client.GetStream();
+                    SendTrainStartMessage((iTrain - 1), 0, stream);
+                    SendTriggerMessage(0x02, stream);
+                    return true;
+                }
+                /* 
                 TcpClient client = Connect(sIpAddress);
                 SendTrainStartMessage((iTrain - 1), 0, client);
+                client = Connect(sIpAddress);
                 SendTriggerMessage(0x02, client);
                 client.Close();
                 return true;
+                 */
             }
             catch (Exception e)
             {
                 // Something went wrong
                 // TO DO: flesh out this exception handler
-                Console.WriteLine("WARNING: failed to send ride start message");
+                Console.WriteLine("WARNING: failed to send ride start message (StartRide)");
+                Console.WriteLine("{0}", e);
                 return false;
             }
             
@@ -100,15 +112,22 @@ namespace PimmsInterface
         /// <returns>true if OK, false otherwise</returns>
         public bool LogOn(String sIpAddress)
         {
-            bool result = false;
-            using (TcpClient client = Connect(sIpAddress))
+            try
             {
-                if (SendLogOnMessage(client))
+                using (TcpClient client = Connect(sIpAddress))
                 {
-                    result = true;
+                    NetworkStream stream = client.GetStream();
+                    SendLogOnMessage(stream);
+                    return true;
                 }
             }
-            return result;
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to send log on message (LogOn)");
+                Console.WriteLine("{0}", e);
+            }
+            
+            return false;
         }
 
 
@@ -149,6 +168,7 @@ namespace PimmsInterface
             catch (Exception e)
             {
                 // TO DO: flesh out this exception handler
+                Console.WriteLine("Failed to open connection to server");
                 Console.WriteLine("Exception: {0}", e);
                 client = null;
             }
@@ -160,9 +180,9 @@ namespace PimmsInterface
         /// Can be either a trigger event message or a trigger poll response message
         /// </summary>
         /// <param name="bOpcode">Single byte message OpCode, 0x02 for trigger event, 0x07 for poll response</param>
-        /// <param name="client">A TcpClient object to send the message with</param>
+        /// <param name="stream">A NetworkStream object to send the data on</param>
         /// <returns>true if OK, false otherwise</returns>
-        private bool SendTriggerMessage(byte bOpcode, TcpClient client)
+        private bool SendTriggerMessage(byte bOpcode, NetworkStream stream)
         {
             bool result = false;
             // trigger message data as raw hex bytes, never needs to vary in Vio system (apart from opcode byte)
@@ -175,16 +195,13 @@ namespace PimmsInterface
 
             try
             {
-                using (NetworkStream stream = client.GetStream())
-                {
-                    // Write the data to the network stream
-                    stream.Write(data, 0, data.Length);
-                }
-                result = true;
-                
+                // Write the data to the network stream
+                stream.Write(data, 0, data.Length);
+                result = true;            
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to send trigger message");
                 Console.WriteLine("Exception: {0}", e);
             }
             return result;
@@ -199,7 +216,7 @@ namespace PimmsInterface
         /// <param name="iControllerID">integer ID of the controller seen by the trigger. Can always use 0 in Vio system</param>
         /// <param name="client">A TcpClient object to send the message with</param>
         /// <returns>true if OK, false otherwise</returns>
-        private bool SendTrainStartMessage(int iTrainID, int iControllerID, TcpClient client)
+        private bool SendTrainStartMessage(int iTrainID, int iControllerID, NetworkStream stream)
         {
             bool result = false;
             
@@ -216,15 +233,13 @@ namespace PimmsInterface
             
             try
             {
-                using (NetworkStream stream = client.GetStream())
-                {
-                    // Write the data to the network stream
-                    stream.Write(data, 0, data.Length);
-                }              
+                // Write the data to the network stream
+                stream.Write(data, 0, data.Length);             
                 result = true;
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to send train start message");
                 Console.WriteLine("Exception: {0}", e);
             }
             return result;
@@ -239,10 +254,8 @@ namespace PimmsInterface
         /// </summary>
         /// <param name="client">A TcpClient object to send the message with</param>
         /// <returns>true if OK, false otherwise</returns>
-        private bool SendLogOnMessage(TcpClient client)
+        private bool SendLogOnMessage(NetworkStream stream)
         {
-            bool result = false;
-
             // log on message data as raw hex
             // __MSG_TYPE = 04
             // __MSG_OPCODE = 00
@@ -272,18 +285,17 @@ namespace PimmsInterface
             
             try
             {
-                using (NetworkStream stream = client.GetStream())
-                {
-                    // Write the data to the network stream
-                    stream.Write(data, 0, data.Length);
-                }
-                result = true;
+                // Write the data to the network stream
+                stream.Write(data, 0, data.Length);
+                return true;
             }
             catch (Exception e)
             {
+                Console.WriteLine("Failed to send log on message");
                 Console.WriteLine("Exception: {0}", e);
+                return false;
             }
-            return result;
+            
         }
 
         /// <summary>
