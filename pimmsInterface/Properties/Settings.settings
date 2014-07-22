@@ -53,5 +53,11 @@
     <Setting Name="sController3IpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.1.33</Value>
     </Setting>
+    <Setting Name="sImageFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">pic.jpg</Value>
+    </Setting>
+    <Setting Name="sPsiHotFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\192.168.1.1\e\cam1pics</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

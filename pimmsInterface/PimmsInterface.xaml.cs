@@ -40,11 +40,18 @@ namespace PimmsInterface
         String sBatteryIniFile = PimmsInterface.Properties.Settings.Default.sBatteryIniFile;
         String sVideoFile = PimmsInterface.Properties.Settings.Default.sVideoFile;
         String sVideoInfFile = PimmsInterface.Properties.Settings.Default.sVideoInfFile;
+        String sImageFile = PimmsInterface.Properties.Settings.Default.sImageFile;
         
         // Number of Cameras and Controllers to initialise
         int iNumCameras = PimmsInterface.Properties.Settings.Default.iNumberOfCameras;
         int iNumControllers = PimmsInterface.Properties.Settings.Default.iNumberOfControllers;
         int iNumRows = PimmsInterface.Properties.Settings.Default.iNumberOfRows;
+
+        // PSI Photo Camera Hot Folder
+        String sPsiHotFolder = PimmsInterface.Properties.Settings.Default.sPsiHotFolder;
+
+        // Filename integer for images destined for PSI hot folder
+        int iPicId;
         
         // Declare PimmsTCPClient objects    
         PimmsTcpClient pimmsClient;
@@ -53,6 +60,8 @@ namespace PimmsInterface
         public MainWindow()
         {
             InitializeComponent();
+
+            iPicId = 1;
             
             // Create a new PimmsTCPCLient object to manage communications from various components to a PiMMS server
             pimmsClient = new PimmsTcpClient(sServerIpAddress, iServerPort);
@@ -154,8 +163,15 @@ namespace PimmsInterface
                             if (SampleVideoCheckBox.IsChecked == true)
                             {
                                 // Use a dummy source video file
-                                Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
-                                System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                                if (!System.IO.File.Exists(sDestVideoFile))
+                                {
+                                    Console.WriteLine("Copying {0} to {1}", sSourceVideoFile, sDestVideoFile);
+                                    System.IO.File.Copy(sSourceVideoFile, sDestVideoFile, true);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Skipping {0}, file exists", sDestVideoFile);
+                                }
                             }
                             else
                             {
@@ -231,6 +247,33 @@ namespace PimmsInterface
             // Log On
             Console.WriteLine("Logging On (1)");
             pimmsClient.LogOn(sController2IpAddress);
+        }
+
+        private void PhotoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Take a 'photo'
+            String sSourcePhoto = System.IO.Path.Combine(sSourceFilePath, sImageFile);
+            String sDestinationPhoto = System.IO.Path.Combine(sPsiHotFolder, iPicId.ToString(), ".jpg");
+
+            try
+            {
+                Console.WriteLine("Copying {0} to {1}", sSourcePhoto, sDestinationPhoto);
+                System.IO.File.Copy(sSourcePhoto, sDestinationPhoto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception {0}", ex);
+            }
+
+            // increment the Pic ID ready for the next grab.
+            if (iPicId > 100)
+            {
+                iPicId = 1;
+            }
+            else
+            {
+                iPicId++;
+            }
         }
     }
 }

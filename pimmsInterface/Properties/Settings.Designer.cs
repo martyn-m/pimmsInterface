@@ -226,5 +226,29 @@ namespace PimmsInterface.Properties {
                 this["sController3IpAddress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("pic.jpg")]
+        public string sImageFile {
+            get {
+                return ((string)(this["sImageFile"]));
+            }
+            set {
+                this["sImageFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\192.168.1.1\\e\\cam1pics")]
+        public string sPsiHotFolder {
+            get {
+                return ((string)(this["sPsiHotFolder"]));
+            }
+            set {
+                this["sPsiHotFolder"] = value;
+            }
+        }
     }
 }
